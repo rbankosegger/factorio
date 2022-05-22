@@ -118,3 +118,61 @@ class TestPlacementSpecifications(unittest.TestCase):
         instance = Factorio(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
+
+
+    def test_placement_on_resources(self):
+
+        inmap = """
+            free((0,0)). free((0,1)). free((1,0)). free((1,1)). free((2,0)). free((2,1)). 
+            place_ground_resource(r1, (0,0)). 
+            place_ground_resource(r1, (2,0)). 
+            place_ground_resource(r1, (2,1)).
+        """
+
+        specs = """
+            spec(fs1).
+            spec_size(fs1, 1, 2).
+
+            spec_minimal_ground_resource_needs(fs1, r1, 1).
+        """
+
+        graph = """
+            pipe_node_spec(f1, fs1).
+        """
+
+        models = {
+            frozenset({ 'place(f1,(0,0))'}),
+            frozenset({ 'place(f1,(2,0))'}),
+        }
+
+        instance = Factorio(inmap, specs, graph)
+        instance.solve()
+        self.assertSetEqual(instance.models, models)
+
+    def test_placement_on_resources_2(self):
+
+        inmap = """
+            free((0,0)). free((0,1)). free((1,0)). free((1,1)). free((2,0)). free((2,1)). 
+            place_ground_resource(r1, (1,0)). 
+            place_ground_resource(r1, (2,0)). 
+            place_ground_resource(r1, (2,1)).
+        """
+
+        specs = """
+            spec(fs1).
+            spec_size(fs1, 2, 2).
+
+            spec_minimal_ground_resource_needs(fs1, r1, 3).
+        """
+
+        graph = """
+            pipe_node_spec(f1, fs1).
+        """
+
+        models = {
+            frozenset({ 'place(f1,(1,0))'}),
+        }
+
+        instance = Factorio(inmap, specs, graph)
+        instance.solve()
+        self.assertSetEqual(instance.models, models)

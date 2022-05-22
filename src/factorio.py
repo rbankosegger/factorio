@@ -6,6 +6,7 @@ class Factorio:
         self.models = set()
 
         lp = """
+
             to_place(Building) :- pipe_node_spec(Building, _).
             1 = { place(Building, XY) : free(XY) } :- to_place(Building).
             1 >= { place(Building, XY) : to_place(Building) } :- free(XY).
@@ -18,6 +19,20 @@ class Factorio:
             
             violate(placed_on_not_free_terrain(XY)) :- associate(_, XY), not free(XY).
             violate(buildings_intersect(B1,B2,XY)) :- associate(B1, XY), associate(B2, XY), B1<B2.
+
+            #defined place_ground_resource/2.
+            #defined spec_minimal_ground_resource_needs/3.
+            coversResource(Building, Resource, XY) :- associate(Building, XY), 
+                place_ground_resource(Resource, XY).
+            coversResourceCnt(Building, Resource, N) :- 
+                pipe_node_spec(Building, Spec),
+                spec_minimal_ground_resource_needs(Spec, Resource, _),
+                N = #count{ XY : coversResource(Building, Resource, XY) }.
+            violate(ground_resource_needs(Building, IsRes)) :- pipe_node_spec(Building, Spec),
+                spec_minimal_ground_resource_needs(Spec, Resource, MinRes),
+                coversResourceCnt(Building, Resource, IsRes),
+                IsRes < MinRes.
+
             :- violate(_).
 
             #show place/2.
