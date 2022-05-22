@@ -161,7 +161,6 @@ class TestPlacementSpecifications(unittest.TestCase):
         specs = """
             spec(fs1).
             spec_size(fs1, 2, 2).
-
             spec_minimal_ground_resource_needs(fs1, r1, 3).
         """
 
