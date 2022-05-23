@@ -45,46 +45,6 @@ class Factorio:
 
             #defined pipe_touch_point/2.
             pipe_touch(B1, B2) :- pipe_touch_point((B1,_), (B2,_)).
-
-%            buildings_touch_point(B1,B2) :- pipe_touch_point((B1,(DX,DY)), (B2,any)),
-%                associate(B1,L1),
-%                associate(B2,(X,Y)),
-%                adj(L1,(X,Y)),
-%                place(B1,(BX,BY)),
-%                X=BX+DX,
-%                Y=BY+DY.
-%            buildings_touch_point(B1,B2) :- pipe_touch_point((B1,any), (B2,(DX,DY))),
-%                associate(B1,(X,Y)),
-%                associate(B2,L2),
-%                adj(L2,(X,Y)),
-%                place(B2,(BX,BY)),
-%                X=BX+DX,
-%                Y=BY+DY.
-%            buildings_touch_point(B1,B2) :- pipe_touch_point((B1,(DX1,DY1)), (B2,(DX2,DY2))),
-%                associate(B1,(BX1,BY1)),
-%                associate(B2,(BX2,BY2)),
-%                adj((XB1,YB1),(BX2,BY2)),
-%                place(B1,(PX1,PY1)),
-%                place(B2,(PX2,PY2)),
-%                BX1=PX2+DX2,
-%                BY1=PY2+DY2,
-%                BX2=PX1+DX1,
-%                BY2=PY1+DY1.
-%            violate(buildings_dont_touch_point(B1,B2)) :- pipe_touch_point((B1,P1), (B2,P2)), 
-%                P1!=any, 
-%                not buildings_touch_point(B1,B2).
-%            violate(buildings_dont_touch_point(B1,B2)) :- pipe_touch_point((B1,P1), (B2,P2)), 
-%                P2!=any, 
-%                not buildings_touch_point(B1,B2).
-%
-%            buildings_touch_point(B1,B2) :- pipe_touch_point((B1,(DX,DY)), (B2,any)),
-%                associate(B1,L1),
-%                associate(B2,(X,Y)),
-%                adj(L1,(X,Y)),
-%                place(B1,(BX,BY)),
-%                X=BX+DX,
-%                Y=BY+DY.
-
             touching_point(B1,B2,L1) :- pipe_touch_point((B1,_), (B2,_)),
                 associate(B1,L1),
                 associate(B2,L2),
@@ -166,12 +126,97 @@ class Factorio:
                 touching_points_y_axis_violated(Join).
             :- violate(not_on_same_axis(_)).
 
-            % #show violate/1.
+            
+            #defined pipe_belt/1.
+            #defined pipe_belt_connect_in_order/3.
+            { place_belt(Belt, XY) : free(XY) } :- pipe_belt(Belt).
+            1 >= {  place(Building, XY)  : to_place(Building); 
+                    place_belt(Belt, XY) : pipe_belt(Belt)      } :- free(XY).
+            associate(Belt, (X,Y)) :- place_belt(Belt, (X, Y)). 
+
+            % Belt Touching
+            pipe_touch_point((Belt,any),(Building,any)) :- pipe_belt_connect_in_order(Belt, Building, _).
+
+            % Belt order and connectedness
+            belt_lowest_touching_point(Belt, XY, I) :- 
+                place_belt(Belt,XY),
+                touching_point(Belt, Building, XY),
+                I = #min { J : pipe_belt_connect_in_order(Belt,_,J) }.
+            -belt_start(Belt,XY,I) :-
+                place_belt(Belt,XY),
+                belt_lowest_touching_point(Belt,XY,I),
+                belt_lowest_touching_point(Belt,XY2,I),
+                XY2<XY.
+            -belt_start(Belt,XY,I) :-
+                place_belt(Belt,XY),
+                belt_lowest_touching_point(Belt,XY,I),
+                belt_lowest_touching_point(Belt,_,J),
+                J<I.
+            belt_start(Belt,XY) :-
+                place_belt(Belt,XY),
+                belt_lowest_touching_point(Belt,XY,I),
+                not -belt_start(Belt,XY,I).
+            -belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
+                pipe_belt_connect_in_order(Belt,Building,I),
+                touching_point(Belt, Building2, XY),
+                pipe_belt_connect_in_order(Belt,Building2,J),
+                J>I.
+            belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
+                pipe_belt_connect_in_order(Belt,Building,I),
+                not -belt_order(Belt,XY,I).
+            violate(no_belt_start(Belt)) :- pipe_belt(Belt), not belt_start(Belt,_).
+            :- violate(no_belt_start(_)).
+            belt_connected(Belt, XY, I, start) :- belt_start(Belt, XY), belt_order(Belt, XY, I).
+            1 >= { belt_connected(Belt, P2, I, P1): adj(P1,P2), place_belt(Belt, P2), not belt_order(Belt, P2, _);
+                   belt_connected(Belt, P2, J, P1): adj(P1,P2), place_belt(Belt, P2), belt_order(Belt, P2, J), J>=I } :- 
+                belt_connected(Belt, P1, I, _).    
+            violate(belt_not_connected(Belt, XY)) :- place_belt(Belt, XY), not belt_connected(Belt, XY, _, _).
+            :- violate(belt_not_connected(_,_)).
+
+            violate(belt_part_has_more_than_one_connection(Belt, XY)) :- 
+                pipe_belt(Belt),
+                belt_connected(belt, XY, _, L1),
+                belt_connected(belt, XY, _, L2),
+                L1 < L2.
+            :- violate(belt_part_has_more_than_one_connection(_,_)).
+            
+            #defined pipe_belt_connect_in_order_on_axis/4.
+            pipe_belt_connect_in_order(Belt, Building, I) :- 
+                pipe_belt_connect_in_order_on_axis(Belt, Building, _, I).
+            pipe_touch(A, B) :- 
+                pipe_belt_connect_in_order_on_axis(Belt, A, B, _).
+            touching_points_on_axis(XY, (Belt,A,B)) :-
+                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                touching_point(Belt,A,XY).
+            touching_points_on_axis(LA,(Belt,A,B)) :- 
+                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                associate(A,LA),
+                associate(B,LB),
+                adj(LA,LB).
+            touching_points_on_axis(LB,(Belt,A,B)) :- 
+                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                associate(A,LA),
+                associate(B,LB),
+                adj(LA,LB).
+
+
+
+
+            % Belt order
+            %#show belt_lowest_touching_point/3.
+            %#show belt_order/3.
+            %#show belt_connected/4.
+            %#show belt_start/2.
+            %#show -belt_start/3.
+            %#show pipe_belt_connect_in_order/3.
+
+
+            #show violate/1.
             #show place/2.
+            #show place_belt/2.
         """
 
         self.clingo_control = clingo.Control()
-        self.clingo_control.configuration.solve.models=0
         self.clingo_control.add('base', [], lp)
         self.clingo_control.add('base', [], inmap)
         self.clingo_control.add('base', [], specs)
@@ -193,7 +238,8 @@ class Factorio:
 
         print(f'Total: {i+1} models')
 
-    def solve(self):
+    def solve(self, models=0):
+        self.clingo_control.configuration.solve.models=models
         self.clingo_control.ground([('base', [])])
         self.clingo_control.solve(on_model=lambda m: self.add_model(m))
 
