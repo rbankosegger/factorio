@@ -21,11 +21,11 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order(belt, b2, 2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, b2, 2).
         """
 
         models = {
@@ -52,13 +52,14 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order(belt, b2, 2).
-            pipe_belt_connect_in_order(belt, b3, 3).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
+
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, b2, 2).
+            supply_belt_connect_in_order(belt, b3, 3).
         """
 
         models = {
@@ -95,11 +96,12 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order(belt, b2, 2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, b2, 2).
         """
 
         models = {
@@ -132,11 +134,12 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order(belt, b2, 2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, b2, 2).
         """
 
         models = {
@@ -182,17 +185,18 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
-            pipe_node_spec(b4, bs1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
+            supply_node_spec(b4, bs1).
 
-            pipe_belt(belt1).
-            pipe_belt_connect_in_order(belt1, b1, 1).
-            pipe_belt_connect_in_order(belt1, b2, 2).
-            pipe_belt(belt2).
-            pipe_belt_connect_in_order(belt2, b3, 1).
-            pipe_belt_connect_in_order(belt2, b4, 2).
+            supply_belt(belt1).
+            supply_belt_connect_in_order(belt1, b1, 1).
+            supply_belt_connect_in_order(belt1, b2, 2).
+
+            supply_belt(belt2).
+            supply_belt_connect_in_order(belt2, b3, 1).
+            supply_belt_connect_in_order(belt2, b4, 2).
         """
 
         models = {
@@ -222,15 +226,15 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
 
-            pipe_touch(b2,b3).
+            supply_touch(b2,b3).
 
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order_on_axis(belt, b2, b3, 2).
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order_on_axis(belt, b2, b3, 2).
         """
 
         models = {
@@ -260,15 +264,15 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
 
-            pipe_touch(b2,b3).
+            supply_touch(b2,b3).
 
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order(belt, b2, 2).
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, b2, 2).
         """
 
         models = {
@@ -298,19 +302,19 @@ class TestBeltSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
-            pipe_node_spec(b4, bs1).
-            pipe_node_spec(b5, bs1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
+            supply_node_spec(b4, bs1).
+            supply_node_spec(b5, bs1).
 
-            pipe_touch(b2,b3).
-            pipe_touch(b4,b5).
+            supply_touch(b2,b3).
+            supply_touch(b4,b5).
 
-            pipe_belt(belt).
-            pipe_belt_connect_in_order(belt, b1, 1).
-            pipe_belt_connect_in_order_on_axis(belt, b2, b3, 2).
-            pipe_belt_connect_in_order_on_axis(belt, b4, b5, 3).
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order_on_axis(belt, b2, b3, 2).
+            supply_belt_connect_in_order_on_axis(belt, b4, b5, 3).
         """
 
         models = {

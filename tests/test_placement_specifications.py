@@ -20,7 +20,7 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
+            supply_node_spec(f1, fs1).
         """
 
         models = {
@@ -47,9 +47,9 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
-            pipe_node_spec(f2, fs1).
-            pipe_node_spec(f3, fs2).
+            supply_node_spec(f1, fs1).
+            supply_node_spec(f2, fs1).
+            supply_node_spec(f3, fs2).
         """
 
         models = {
@@ -81,9 +81,9 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
-            pipe_node_spec(f2, fs1).
-            pipe_node_spec(f3, fs2).
+            supply_node_spec(f1, fs1).
+            supply_node_spec(f2, fs1).
+            supply_node_spec(f3, fs2).
         """
 
         models = {
@@ -109,7 +109,7 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
+            supply_node_spec(f1, fs1).
         """
 
         # We cannot place building `fs1` due to obstacles -> There are no answer sets!
@@ -137,7 +137,7 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
+            supply_node_spec(f1, fs1).
         """
 
         models = {
@@ -165,7 +165,7 @@ class TestPlacementSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(f1, fs1).
+            supply_node_spec(f1, fs1).
         """
 
         models = {

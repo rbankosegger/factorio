@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
 
 from factorio import Factorio
 
-class TestInputSpecifications(unittest.TestCase):
+class TestTouchingSpecifications(unittest.TestCase):
 
     def test_single_touching(self):
 
@@ -24,9 +24,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
-            pipe_touch(b1,b2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
+            supply_touch(b1,b2).
         """
 
         models = {
@@ -54,9 +54,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
-            pipe_touch(b2,b1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
+            supply_touch(b2,b1).
         """
 
         models = {
@@ -86,11 +86,11 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs2).
-            pipe_touch(b1,b3).
-            pipe_touch(b2,b3).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs2).
+            supply_touch(b1,b3).
+            supply_touch(b2,b3).
         """
 
         models = {
@@ -119,14 +119,14 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
-            pipe_node_spec(b4, bs1).
-            pipe_touch(b1,b2).
-            pipe_touch(b2,b3).
-            pipe_touch(b3,b4).
-            pipe_touch(b4,b1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
+            supply_node_spec(b4, bs1).
+            supply_touch(b1,b2).
+            supply_touch(b2,b3).
+            supply_touch(b3,b4).
+            supply_touch(b4,b1).
         """
 
         models = {
@@ -154,9 +154,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
-            pipe_touch_point((b1,any),(b2,any)).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
+            supply_touch_point((b1,any),(b2,any)).
         """
 
         models = {
@@ -184,9 +184,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
-            pipe_touch_point((b2,any),(b1,any)).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
+            supply_touch_point((b2,any),(b1,any)).
         """
 
         models = {
@@ -210,9 +210,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b1,(-1,0)),(b2,any)).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b1,(-1,0)),(b2,any)).
         """
 
         models = {
@@ -236,9 +236,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b1,any),(b2,(1,0))).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b1,any),(b2,(1,0))).
         """
 
         models = {
@@ -263,9 +263,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b2,(-1,-1)), (b1,any)).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b2,(-1,-1)), (b1,any)).
         """
 
         models = {
@@ -289,9 +289,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b1,any), (b2,(-1,-1))).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b1,any), (b2,(-1,-1))).
         """
 
         models = {
@@ -315,9 +315,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b1,(1,1)),(b2,(-1,-1))).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b1,(1,1)),(b2,(-1,-1))).
         """
 
         models = {
@@ -341,9 +341,9 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b2,(-1,-1)), (b1,(1,1))).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b2,(-1,-1)), (b1,(1,1))).
         """
 
         models = {
@@ -367,13 +367,13 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_touch_point((b2,associate_multiple(touch1)), (b1,associate_multiple(touch2))).
-            pipe_touch_multiple_associate(touch1, (-1,-1)).
-            pipe_touch_multiple_associate(touch1, (1,1)).
-            pipe_touch_multiple_associate(touch2, (-1,-1)).
-            pipe_touch_multiple_associate(touch2, (1,1)).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_touch_point((b2,associate_multiple(touch1)), (b1,associate_multiple(touch2))).
+            supply_touch_multiple_associate(touch1, (-1,-1)).
+            supply_touch_multiple_associate(touch1, (1,1)).
+            supply_touch_multiple_associate(touch2, (-1,-1)).
+            supply_touch_multiple_associate(touch2, (1,1)).
         """
 
         models = {
@@ -401,14 +401,14 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
 
-            pipe_touch_point((b1,associate_multiple(touch1)), (b2,any)).
-            pipe_touch_multiple_associate(touch1, (0,-1)).
-            pipe_touch_multiple_associate(touch1, (2,0)).
-            pipe_touch_multiple_associate(touch1, (1,2)).
-            pipe_touch_multiple_associate(touch1, (-1,1)).
+            supply_touch_point((b1,associate_multiple(touch1)), (b2,any)).
+            supply_touch_multiple_associate(touch1, (0,-1)).
+            supply_touch_multiple_associate(touch1, (2,0)).
+            supply_touch_multiple_associate(touch1, (1,2)).
+            supply_touch_multiple_associate(touch1, (-1,1)).
         """
 
         models = {
@@ -438,14 +438,14 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs2).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
 
-            pipe_touch_point((b2,any), (b1,associate_multiple(touch1))).
-            pipe_touch_multiple_associate(touch1, (0,-1)).
-            pipe_touch_multiple_associate(touch1, (2,0)).
-            pipe_touch_multiple_associate(touch1, (1,2)).
-            pipe_touch_multiple_associate(touch1, (-1,1)).
+            supply_touch_point((b2,any), (b1,associate_multiple(touch1))).
+            supply_touch_multiple_associate(touch1, (0,-1)).
+            supply_touch_multiple_associate(touch1, (2,0)).
+            supply_touch_multiple_associate(touch1, (1,2)).
+            supply_touch_multiple_associate(touch1, (-1,1)).
         """
 
         models = {
@@ -474,11 +474,11 @@ class TestInputSpecifications(unittest.TestCase):
         """
 
         graph = """
-            pipe_node_spec(b1, bs1).
-            pipe_node_spec(b2, bs1).
-            pipe_node_spec(b3, bs1).
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
 
-            pipe_touch_on_axis(b1,b2,b3).
+            supply_touch_on_axis(b1,b2,b3).
         """
 
         models = {

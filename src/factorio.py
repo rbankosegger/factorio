@@ -6,12 +6,12 @@ class Factorio:
 
         lp = """
 
-            to_place(Building) :- pipe_node_spec(Building, _).
+            to_place(Building) :- supply_node_spec(Building, _).
             1 = { place(Building, XY) : free(XY) } :- to_place(Building).
             1 >= { place(Building, XY) : to_place(Building) } :- free(XY).
 
             associate(Building, (X,Y)) :- place(Building, (X0, Y0)), 
-                                          pipe_node_spec(Building, Spec),
+                                          supply_node_spec(Building, Spec),
                                           spec_size(Spec, SX, SY),
                                           X = X0..(X0+SX-1),
                                           Y = Y0..(Y0+SY-1).
@@ -26,41 +26,41 @@ class Factorio:
             coversResource(Building, Resource, XY) :- associate(Building, XY), 
                 place_ground_resource(Resource, XY).
             coversResourceCnt(Building, Resource, N) :- 
-                pipe_node_spec(Building, Spec),
+                supply_node_spec(Building, Spec),
                 spec_minimal_ground_resource_needs(Spec, Resource, _),
                 N = #count{ XY : coversResource(Building, Resource, XY) }.
-            violate(ground_resource_needs(Building, IsRes)) :- pipe_node_spec(Building, Spec),
+            violate(ground_resource_needs(Building, IsRes)) :- supply_node_spec(Building, Spec),
                 spec_minimal_ground_resource_needs(Spec, Resource, MinRes),
                 coversResourceCnt(Building, Resource, IsRes),
                 IsRes < MinRes.
             :- violate(ground_resource_needs(_,_)).
 
-            #defined pipe_touch/2.
+            #defined supply_touch/2.
             adj((X,Y), (X+1,Y)) :- free((X,Y)), free((X+1,Y)).
             adj((X,Y), (X,Y+1)) :- free((X,Y)), free((X,Y+1)).
             adj(L2, L1) :- adj(L1, L2).
-            buildings_touch(B1,B2) :- pipe_touch(B1, B2), associate(B1, L1), associate(B2, L2), adj(L1,L2).
-            violate(buildings_touch(B1, B2)) :- pipe_touch(B1, B2),  not buildings_touch(B1, B2).
+            buildings_touch(B1,B2) :- supply_touch(B1, B2), associate(B1, L1), associate(B2, L2), adj(L1,L2).
+            violate(buildings_touch(B1, B2)) :- supply_touch(B1, B2),  not buildings_touch(B1, B2).
             :- violate(buildings_touch(_,_)).
 
-            #defined pipe_touch_point/2.
-            pipe_touch(B1, B2) :- pipe_touch_point((B1,_), (B2,_)).
-            touching_point(B1,B2,L1) :- pipe_touch_point((B1,_), (B2,_)),
+            #defined supply_touch_point/2.
+            supply_touch(B1, B2) :- supply_touch_point((B1,_), (B2,_)).
+            touching_point(B1,B2,L1) :- supply_touch_point((B1,_), (B2,_)),
                 associate(B1,L1),
                 associate(B2,L2),
                 adj(L1,L2).
-            touching_point(B1,B2,L2) :- pipe_touch_point((B1,_), (B2,_)),
+            touching_point(B1,B2,L2) :- supply_touch_point((B1,_), (B2,_)),
                 associate(B1,L1),
                 associate(B2,L2),
                 adj(L1,L2).
 
 
             required_touching_point(B2, (X+DX,Y+DY)) :- 
-                pipe_touch_point((B1,(DX,DY)), (B2,_)),
+                supply_touch_point((B1,(DX,DY)), (B2,_)),
                 place(B1,(X,Y)).
 
             required_touching_point(B1, (X+DX,Y+DY)) :- 
-                pipe_touch_point((B1,_), (B2,(DX,DY))),
+                supply_touch_point((B1,_), (B2,(DX,DY))),
                 place(B2,(X,Y)).
 
             required_touching_point_touched(B,P) :-
@@ -74,14 +74,14 @@ class Factorio:
             :- violate(required_touching_point_not_touched(_,_)).
 
 
-            #defined pipe_touch_multiple_associate/2.
+            #defined supply_touch_multiple_associate/2.
             required_possible_touching_point(B2, (X+DX,Y+DY), A) :- 
-                pipe_touch_point((B1,associate_multiple(A)), (B2,_)),
-                pipe_touch_multiple_associate(A, (DX,DY)),
+                supply_touch_point((B1,associate_multiple(A)), (B2,_)),
+                supply_touch_multiple_associate(A, (DX,DY)),
                 place(B1,(X,Y)).
             required_possible_touching_point(B1, (X+DX,Y+DY), A) :- 
-                pipe_touch_point((B1,_), (B2,associate_multiple(A))),
-                pipe_touch_multiple_associate(A, (DX,DY)),
+                supply_touch_point((B1,_), (B2,associate_multiple(A))),
+                supply_touch_multiple_associate(A, (DX,DY)),
                 place(B2,(X,Y)).
 
             touching_association_fulfilled(B,A) :-
@@ -94,22 +94,22 @@ class Factorio:
             :- violate(touching_association_not_fulfilled(_,_)).
 
 
-            #defined pipe_touch_on_axis/3.
-            pipe_touch(A, B) :- pipe_touch_on_axis(A,B,_).
-            pipe_touch(B, C) :- pipe_touch_on_axis(_,B,C).
-            touching_points_on_axis(LA,(A,B,C)) :- pipe_touch_on_axis(A,B,C),
+            #defined supply_touch_on_axis/3.
+            supply_touch(A, B) :- supply_touch_on_axis(A,B,_).
+            supply_touch(B, C) :- supply_touch_on_axis(_,B,C).
+            touching_points_on_axis(LA,(A,B,C)) :- supply_touch_on_axis(A,B,C),
                 associate(A,LA),
                 associate(B,LB),
                 adj(LA,LB).
-            touching_points_on_axis(LB,(A,B,C)) :- pipe_touch_on_axis(A,B,C),
+            touching_points_on_axis(LB,(A,B,C)) :- supply_touch_on_axis(A,B,C),
                 associate(A,LA),
                 associate(B,LB),
                 adj(LA,LB).
-            touching_points_on_axis(LB,(A,B,C)) :- pipe_touch_on_axis(A,B,C),
+            touching_points_on_axis(LB,(A,B,C)) :- supply_touch_on_axis(A,B,C),
                 associate(B,LB),
                 associate(C,LC),
                 adj(LB,LC).
-            touching_points_on_axis(LC,(A,B,C)) :- pipe_touch_on_axis(A,B,C),
+            touching_points_on_axis(LC,(A,B,C)) :- supply_touch_on_axis(A,B,C),
                 associate(B,LB),
                 associate(C,LC),
                 adj(LB,LC).
@@ -127,21 +127,21 @@ class Factorio:
             :- violate(not_on_same_axis(_)).
 
             
-            #defined pipe_belt/1.
-            #defined pipe_belt_connect_in_order/3.
-            { place_belt(Belt, XY) : free(XY) } :- pipe_belt(Belt).
+            #defined supply_belt/1.
+            #defined supply_belt_connect_in_order/3.
+            { place_belt(Belt, XY) : free(XY) } :- supply_belt(Belt).
             1 >= {  place(Building, XY)  : to_place(Building); 
-                    place_belt(Belt, XY) : pipe_belt(Belt)      } :- free(XY).
+                    place_belt(Belt, XY) : supply_belt(Belt)      } :- free(XY).
             associate(Belt, (X,Y)) :- place_belt(Belt, (X, Y)). 
 
             % Belt Touching
-            pipe_touch_point((Belt,any),(Building,any)) :- pipe_belt_connect_in_order(Belt, Building, _).
+            supply_touch_point((Belt,any),(Building,any)) :- supply_belt_connect_in_order(Belt, Building, _).
 
             % Belt order and connectedness
             belt_lowest_touching_point(Belt, XY, I) :- 
                 place_belt(Belt,XY),
                 touching_point(Belt, Building, XY),
-                I = #min { J : pipe_belt_connect_in_order(Belt,_,J) }.
+                I = #min { J : supply_belt_connect_in_order(Belt,_,J) }.
             -belt_start(Belt,XY,I) :-
                 place_belt(Belt,XY),
                 belt_lowest_touching_point(Belt,XY,I),
@@ -157,14 +157,14 @@ class Factorio:
                 belt_lowest_touching_point(Belt,XY,I),
                 not -belt_start(Belt,XY,I).
             -belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
-                pipe_belt_connect_in_order(Belt,Building,I),
+                supply_belt_connect_in_order(Belt,Building,I),
                 touching_point(Belt, Building2, XY),
-                pipe_belt_connect_in_order(Belt,Building2,J),
+                supply_belt_connect_in_order(Belt,Building2,J),
                 J>I.
             belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
-                pipe_belt_connect_in_order(Belt,Building,I),
+                supply_belt_connect_in_order(Belt,Building,I),
                 not -belt_order(Belt,XY,I).
-            violate(no_belt_start(Belt)) :- pipe_belt(Belt), not belt_start(Belt,_).
+            violate(no_belt_start(Belt)) :- supply_belt(Belt), not belt_start(Belt,_).
             :- violate(no_belt_start(_)).
             belt_connected(Belt, XY, I, start) :- belt_start(Belt, XY), belt_order(Belt, XY, I).
             1 >= { belt_connected(Belt, P2, I, P1): adj(P1,P2), place_belt(Belt, P2), not belt_order(Belt, P2, _);
@@ -174,27 +174,27 @@ class Factorio:
             :- violate(belt_not_connected(_,_)).
 
             violate(belt_part_has_more_than_one_connection(Belt, XY)) :- 
-                pipe_belt(Belt),
+                supply_belt(Belt),
                 belt_connected(belt, XY, _, L1),
                 belt_connected(belt, XY, _, L2),
                 L1 < L2.
             :- violate(belt_part_has_more_than_one_connection(_,_)).
             
-            #defined pipe_belt_connect_in_order_on_axis/4.
-            pipe_belt_connect_in_order(Belt, Building, I) :- 
-                pipe_belt_connect_in_order_on_axis(Belt, Building, _, I).
-            pipe_touch(A, B) :- 
-                pipe_belt_connect_in_order_on_axis(Belt, A, B, _).
+            #defined supply_belt_connect_in_order_on_axis/4.
+            supply_belt_connect_in_order(Belt, Building, I) :- 
+                supply_belt_connect_in_order_on_axis(Belt, Building, _, I).
+            supply_touch(A, B) :- 
+                supply_belt_connect_in_order_on_axis(Belt, A, B, _).
             touching_points_on_axis(XY, (Belt,A,B)) :-
-                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
                 touching_point(Belt,A,XY).
             touching_points_on_axis(LA,(Belt,A,B)) :- 
-                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
                 associate(A,LA),
                 associate(B,LB),
                 adj(LA,LB).
             touching_points_on_axis(LB,(Belt,A,B)) :- 
-                pipe_belt_connect_in_order_on_axis(Belt, A, B, _),
+                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
                 associate(A,LA),
                 associate(B,LB),
                 adj(LA,LB).
@@ -208,7 +208,7 @@ class Factorio:
             %#show belt_connected/4.
             %#show belt_start/2.
             %#show -belt_start/3.
-            %#show pipe_belt_connect_in_order/3.
+            %#show supply_belt_connect_in_order/3.
 
 
             #show violate/1.
