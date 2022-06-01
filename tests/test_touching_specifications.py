@@ -492,3 +492,50 @@ class TestTouchingSpecifications(unittest.TestCase):
         instance = Factorio(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
+
+    def test_touch_on_axis_with_larger_buildings(self):
+
+        # Buildings `1`, `2`, `3` must be placed 
+        # with their touching points on the same axis.
+        # Building `1` is pre-placed in the corner.
+        # 4 answer sets should be possible:
+        # ###___   >   ###___ ###___ ###33_ ###_33
+        # ###___   >   ###___ ###___ ###33_ ###_33
+        # ###__#   >   ###__# ###__# ###22# ###22#
+        # _____#   >   3322_# __22_# ___22# ___22#
+        # ____11   >   332211 332211 ____11 ____11
+        # __##11   >   __##11 33##11 __##11 __##11
+
+        inmap = """
+            free((3..5,0)).
+            free((3..5,1)).
+            free((3..4,2)).
+            free((0..4,3)).
+            free((0..5,4)).
+            free((0..1,5)). free((4..5,5)).
+
+            place(b1,(4,4)).
+        """
+
+        specs = """
+            spec(bs1).
+            spec_size(bs1,2,2).
+        """
+
+        graph = """
+            supply_node_spec(b1,bs1).
+            supply_node_spec(b2,bs1).
+            supply_node_spec(b3,bs1).
+            supply_touch_on_axis(b1,b2,b3).
+        """
+
+        models = {
+            frozenset({ 'place(b1,(4,4))', 'place(b2,(2,3))', 'place(b3,(0,3))' }),
+            frozenset({ 'place(b1,(4,4))', 'place(b2,(2,3))', 'place(b3,(0,4))' }),
+            frozenset({ 'place(b1,(4,4))', 'place(b2,(3,2))', 'place(b3,(3,0))' }),
+            frozenset({ 'place(b1,(4,4))', 'place(b2,(3,2))', 'place(b3,(4,0))' }),
+        }
+
+        instance = Factorio(inmap, specs, graph)
+        instance.solve()
+        self.assertSetEqual(instance.models, models)

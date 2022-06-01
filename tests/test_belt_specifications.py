@@ -328,8 +328,109 @@ class TestBeltSpecifications(unittest.TestCase):
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
-    # TODO: Belt connected to building at one of multiple points
-    # TODO: Belt connected on  axis with robot and factory
+    def test_belt_connected_to_specific_points(self):
+
+        inmap = """
+            free((0,0)). free((1,0)). free((2,0)). free((3,0)).
+                         free((1,1)). free((2,1)). free((3,1)).
+                         free((1,2)). free((2,2)). free((3,2)).
+            place(b1,(0,0)).
+            place(b2,(2,1)).
+        """
+
+        specs = """
+            spec(bs1).
+            spec_size(bs1, 1, 1).
+            spec(bs2).
+            spec_size(bs2, 1, 2).
+        """
+
+        graph = """
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs2).
+            supply_belt(belt).
+            supply_belt_connect_in_order(belt, b1, 1).
+            supply_belt_connect_in_order(belt, (b2, associate_multiple(touch1)), 2).
+            supply_touch_multiple_associate(touch1, (-1,1)).
+            supply_touch_multiple_associate(touch1, (1,1)).
+        """
+
+        models = {
+
+            frozenset({ 'place(b1,(0,0))', 'place(b2,(2,1))', 
+                        'place_belt(belt,(1,0))', 
+                        'place_belt(belt,(1,1))', 
+                        'place_belt(belt,(1,2))' }),
+
+            frozenset({ 'place(b1,(0,0))', 'place(b2,(2,1))', 
+                        'place_belt(belt,(1,0))', 'place_belt(belt,(2,0))', 'place_belt(belt,(3,0))', 
+                                                                            'place_belt(belt,(3,1))', 
+                                                                            'place_belt(belt,(3,2))' }),
+        }
+
+        instance = Factorio(inmap, specs, graph)
+        instance.solve()
+        self.assertSetEqual(instance.models, models)
+
+    def test_belt_connected_to_specific_points_check_order(self):
+
+        # As the previous unit test, but reverse order of buildings
+
+        inmap = """
+            free((0,0)). free((1,0)). free((2,0)).
+                         free((1,1)). free((2,1)).
+            place(b1,(0,0)).
+        """
+
+        specs = """
+            spec(bs1).
+            spec_size(bs1, 1, 1).
+        """
+
+        graph = """
+            supply_node_spec(b1, bs1).
+            supply_node_spec(b2, bs1).
+            supply_node_spec(b3, bs1).
+            supply_belt(belt).
+
+            supply_belt_connect_in_order(belt, b1, 1).
+
+            supply_belt_connect_in_order(belt, (b2, associate_multiple(touch1)), 2).
+            supply_touch_multiple_associate(touch1, (0,-1)).
+            supply_touch_multiple_associate(touch1, (0,1)).
+
+            supply_belt_connect_in_order(belt, (b3, associate_multiple(touch2)), 3).
+            supply_touch_multiple_associate(touch2, (0,-1)).
+            supply_touch_multiple_associate(touch2, (0,1)).
+            supply_touch_multiple_associate(touch2, (-1,0)).
+
+        """
+
+        models = {
+
+            frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))', 'place(b3,(2,0))', 
+                        'place_belt(belt,(1,0))' }),
+            frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))', 'place(b3,(2,1))', 
+                        'place_belt(belt,(1,0))', 
+                        'place_belt(belt,(2,0))' }),
+        }
+
+        instance = Factorio(inmap, specs, graph)
+        instance.solve()
+        self.assertSetEqual(instance.models, models)
+
+
+    # TODO: bugfix: one belt cannot end into another
+    # TODO: add requirements.txt
+    # TODO: Belt placement negative case: belt would have to branch to first reach order 2 and then go back to reach order 3 -> no answer sets possible!
+    # TODO: Test placement along belt with to buildings of same order (can be switched)
+
+    # TODO: Watch out that multiple touching points dont screw up the order
+    #           Construct example souch that the belt touches the following in order
+    #            a) touch point of order 1
+    #            b) multi-touch-point of order 3
+    #            c) touch point of order 2
+    #            d) another multi-touch-point of order 3
     ###########
     # Later: two inserters with belt inbetween may reduce to one inserter
     # Later: Needs power source as input specification

@@ -90,41 +90,41 @@ class Factorio:
             violate(touching_association_not_fulfilled(B,A)) :-
                 required_possible_touching_point(B,_,A),
                 not touching_association_fulfilled(B,A).
-
             :- violate(touching_association_not_fulfilled(_,_)).
 
 
             #defined supply_touch_on_axis/3.
             supply_touch(A, B) :- supply_touch_on_axis(A,B,_).
             supply_touch(B, C) :- supply_touch_on_axis(_,B,C).
-            touching_points_on_axis(LA,(A,B,C)) :- supply_touch_on_axis(A,B,C),
+            touching_points_x_axis_okay(A,B,C) :-
+                supply_touch_on_axis(A,B,C),
                 associate(A,LA),
-                associate(B,LB),
-                adj(LA,LB).
-            touching_points_on_axis(LB,(A,B,C)) :- supply_touch_on_axis(A,B,C),
+                associate(B,LB1),
+                associate(B,LB2),
+                associate(C,LC),
+                adj(LA,LB1),
+                adj(LC,LB2),
+                (X,_)=LA,
+                (X,_)=LB1,
+                (X,_)=LB2,
+                (X,_)=LC.
+            touching_points_y_axis_okay(A,B,C) :-
+                supply_touch_on_axis(A,B,C),
                 associate(A,LA),
-                associate(B,LB),
-                adj(LA,LB).
-            touching_points_on_axis(LB,(A,B,C)) :- supply_touch_on_axis(A,B,C),
-                associate(B,LB),
+                associate(B,LB1),
+                associate(B,LB2),
                 associate(C,LC),
-                adj(LB,LC).
-            touching_points_on_axis(LC,(A,B,C)) :- supply_touch_on_axis(A,B,C),
-                associate(B,LB),
-                associate(C,LC),
-                adj(LB,LC).
-            touching_points_x_axis_violated(Join) :-
-                touching_points_on_axis((X1,Y1), Join),
-                touching_points_on_axis((X2,Y2), Join),
-                X1<X2.
-            touching_points_y_axis_violated(Join) :-
-                touching_points_on_axis((X1,Y1), Join),
-                touching_points_on_axis((X2,Y2), Join),
-                Y1<Y2.
-            violate(not_on_same_axis(Join)) :- 
-                touching_points_x_axis_violated(Join),
-                touching_points_y_axis_violated(Join).
-            :- violate(not_on_same_axis(_)).
+                adj(LA,LB1),
+                adj(LC,LB2),
+                (_,Y)=LA,
+                (_,Y)=LB1,
+                (_,Y)=LB2,
+                (_,Y)=LC.
+            violate(not_on_same_axis(A,B,C)) :- 
+                supply_touch_on_axis(A,B,C),
+                not touching_points_x_axis_okay(A,B,C),
+                not touching_points_y_axis_okay(A,B,C).
+            :- violate(not_on_same_axis(_,_,_)).
 
             
             #defined supply_belt/1.
@@ -135,13 +135,15 @@ class Factorio:
             associate(Belt, (X,Y)) :- place_belt(Belt, (X, Y)). 
 
             % Belt Touching
-            supply_touch_point((Belt,any),(Building,any)) :- supply_belt_connect_in_order(Belt, Building, _).
+            supply_touch_point((Belt,any),(Building,any)) :- 
+                supply_belt_connect_in_order(Belt, Building, _), supply_node_spec(Building,_).
+            belt_connection_order(Belt, Building,I) :- supply_belt_connect_in_order(Belt, Building, I).
 
             % Belt order and connectedness
             belt_lowest_touching_point(Belt, XY, I) :- 
                 place_belt(Belt,XY),
                 touching_point(Belt, Building, XY),
-                I = #min { J : supply_belt_connect_in_order(Belt,_,J) }.
+                I = #min { J : belt_connection_order(Belt,_,J) }.
             -belt_start(Belt,XY,I) :-
                 place_belt(Belt,XY),
                 belt_lowest_touching_point(Belt,XY,I),
@@ -156,16 +158,14 @@ class Factorio:
                 place_belt(Belt,XY),
                 belt_lowest_touching_point(Belt,XY,I),
                 not -belt_start(Belt,XY,I).
-            -belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
-                supply_belt_connect_in_order(Belt,Building,I),
-                touching_point(Belt, Building2, XY),
-                supply_belt_connect_in_order(Belt,Building2,J),
-                J>I.
-            belt_order(Belt,XY,I) :- place_belt(Belt,XY), touching_point(Belt, Building, XY),
-                supply_belt_connect_in_order(Belt,Building,I),
-                not -belt_order(Belt,XY,I).
             violate(no_belt_start(Belt)) :- supply_belt(Belt), not belt_start(Belt,_).
             :- violate(no_belt_start(_)).
+            belt_possible_order(Belt,XY,I) :- place_belt(Belt,XY),
+                touching_point(Belt, Building, XY),
+                belt_connection_order(Belt,Building,I).
+            belt_order(Belt,XY,I) :-
+                belt_possible_order(Belt,XY,_),
+                I = #max { J : belt_possible_order(Belt,XY,J) }.
             belt_connected(Belt, XY, I, start) :- belt_start(Belt, XY), belt_order(Belt, XY, I).
             1 >= { belt_connected(Belt, P2, I, P1): adj(P1,P2), place_belt(Belt, P2), not belt_order(Belt, P2, _);
                    belt_connected(Belt, P2, J, P1): adj(P1,P2), place_belt(Belt, P2), belt_order(Belt, P2, J), J>=I } :- 
@@ -180,26 +180,28 @@ class Factorio:
                 L1 < L2.
             :- violate(belt_part_has_more_than_one_connection(_,_)).
             
+            % Belt may need to connect to a building on axis
             #defined supply_belt_connect_in_order_on_axis/4.
             supply_belt_connect_in_order(Belt, Building, I) :- 
                 supply_belt_connect_in_order_on_axis(Belt, Building, _, I).
-            supply_touch(A, B) :- 
+            supply_touch_on_axis(Belt, A, B) :- 
                 supply_belt_connect_in_order_on_axis(Belt, A, B, _).
-            touching_points_on_axis(XY, (Belt,A,B)) :-
-                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
-                touching_point(Belt,A,XY).
-            touching_points_on_axis(LA,(Belt,A,B)) :- 
-                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
-                associate(A,LA),
-                associate(B,LB),
-                adj(LA,LB).
-            touching_points_on_axis(LB,(Belt,A,B)) :- 
-                supply_belt_connect_in_order_on_axis(Belt, A, B, _),
-                associate(A,LA),
-                associate(B,LB),
-                adj(LA,LB).
+
+            violate(not_on_same_axis(A,B,C)) :- 
+                supply_touch_on_axis(A,B,C),
+                not touching_points_x_axis_okay(A,B,C),
+                not touching_points_y_axis_okay(A,B,C).
 
 
+            % Belt may connect to multiple touching points
+            required_possible_touching_point(Belt, (X+DX,Y+DY), Join) :- 
+                supply_belt_connect_in_order(Belt, (Building, associate_multiple(Join)), _),
+                supply_touch_multiple_associate(Join, (DX,DY)),
+                place(Building,(X,Y)).
+            belt_possible_order(Belt,XY,Order) :-
+                supply_belt_connect_in_order(Belt, (Building, associate_multiple(Join)), Order),
+                required_possible_touching_point(Belt, XY, Join),
+                associate(Belt, XY).
 
 
             % Belt order
