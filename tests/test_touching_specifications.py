@@ -4,7 +4,7 @@ import unittest
 # Make sure the path of the framework is included in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/')))
 
-from factorio import Factorio
+from gridworld import GridWorld
 
 class TestTouchingSpecifications(unittest.TestCase):
 
@@ -34,7 +34,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(3,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -64,7 +64,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(3,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -102,7 +102,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(2,1))', 'place(b2,(3,0))', 'place(b3,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -134,7 +134,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(0,0))', 'place(b2,(1,0))', 'place(b3,(1,1))', 'place(b4,(0,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -164,7 +164,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(3,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -194,7 +194,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(3,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -220,7 +220,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(2,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -246,7 +246,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(2,0))', 'place(b2,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -272,7 +272,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -298,7 +298,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -324,7 +324,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -350,7 +350,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -381,7 +381,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(1,1))', 'place(b2,(0,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -418,7 +418,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(1,1))', 'place(b2,(0,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -455,7 +455,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(1,1))', 'place(b2,(0,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -489,7 +489,7 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(2,1))', 'place(b2,(1,1))', 'place(b3,(0,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -536,6 +536,6 @@ class TestTouchingSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(4,4))', 'place(b2,(3,2))', 'place(b3,(4,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)

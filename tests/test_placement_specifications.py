@@ -4,7 +4,7 @@ import unittest
 # Make sure the path of the framework is included in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/')))
 
-from factorio import Factorio
+from gridworld import GridWorld
 
 class TestPlacementSpecifications(unittest.TestCase):
 
@@ -27,7 +27,7 @@ class TestPlacementSpecifications(unittest.TestCase):
             frozenset({ 'place(f1,(0,0))'}),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -59,7 +59,7 @@ class TestPlacementSpecifications(unittest.TestCase):
             frozenset({ 'place(f1,(1,1))', 'place(f2,(1,0))', 'place(f3,(0,0))' }),
         }
         
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
 
         self.assertSetEqual(instance.models, models)
@@ -91,7 +91,7 @@ class TestPlacementSpecifications(unittest.TestCase):
             frozenset({ 'place(f1,(1,1))', 'place(f2,(0,1))', 'place(f3,(0,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
 
         self.assertSetEqual(instance.models, models)
@@ -115,7 +115,7 @@ class TestPlacementSpecifications(unittest.TestCase):
         # We cannot place building `fs1` due to obstacles -> There are no answer sets!
         models = set()
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -145,7 +145,7 @@ class TestPlacementSpecifications(unittest.TestCase):
             frozenset({ 'place(f1,(2,0))'}),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -172,6 +172,6 @@ class TestPlacementSpecifications(unittest.TestCase):
             frozenset({ 'place(f1,(1,0))'}),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)

@@ -4,7 +4,7 @@ import unittest
 # Make sure the path of the framework is included in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/')))
 
-from factorio import Factorio
+from gridworld import GridWorld
 
 class TestBeltSpecifications(unittest.TestCase):
 
@@ -33,7 +33,7 @@ class TestBeltSpecifications(unittest.TestCase):
             frozenset({ 'place(b1,(1,0))', 'place(b2,(3,0))', 'place_belt(belt,(2,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -75,7 +75,7 @@ class TestBeltSpecifications(unittest.TestCase):
             #             'place_belt(belt,(1,1))', 'place_belt(belt,(2,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -123,7 +123,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(1,1))', 'place_belt(belt,(2,1))', 'place_belt(belt,(3,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -159,7 +159,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(0,2))', 'place_belt(belt,(1,2))', 'place_belt(belt,(2,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -195,7 +195,7 @@ class TestBeltSpecifications(unittest.TestCase):
 
         models = set()
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -231,7 +231,7 @@ class TestBeltSpecifications(unittest.TestCase):
 
         models = set()
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -284,7 +284,7 @@ class TestBeltSpecifications(unittest.TestCase):
                                                                             'place_belt(belt,(1,3))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -326,7 +326,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt1,(1,0))', 'place_belt(belt2,(0,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -370,7 +370,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt1,(1,0))', 'place_belt(belt2,(0,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -409,7 +409,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(1,0))', 'place_belt(belt,(1,1))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -447,7 +447,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(1,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -489,7 +489,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(1,0))', 'place_belt(belt,(2,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -533,7 +533,7 @@ class TestBeltSpecifications(unittest.TestCase):
                                                                             'place_belt(belt,(3,2))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
@@ -580,7 +580,7 @@ class TestBeltSpecifications(unittest.TestCase):
                         'place_belt(belt,(2,0))' }),
         }
 
-        instance = Factorio(inmap, specs, graph)
+        instance = GridWorld(inmap, specs, graph)
         instance.solve()
         self.assertSetEqual(instance.models, models)
 

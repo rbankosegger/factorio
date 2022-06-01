@@ -1,6 +1,6 @@
 import clingo
 
-class Factorio:
+class GridWorld:
     def __init__(self, inmap, specs, graph):
         self.models = set()
 
