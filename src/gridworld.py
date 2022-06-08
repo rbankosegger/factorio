@@ -137,7 +137,7 @@ class GridWorld:
             % Belt Touching
             supply_touch_point((Belt,any),(Building,any)) :- 
                 supply_belt_connect_in_order(Belt, Building, _), supply_node_spec(Building,_).
-            belt_connection_order(Belt, Building,I) :- supply_belt_connect_in_order(Belt, Building, I).
+            belt_connection_order(Belt,Building,I) :- supply_belt_connect_in_order(Belt, Building, I).
 
             % Belt order and connectedness
             belt_lowest_touching_point(Belt, XY, I) :- 
@@ -202,7 +202,11 @@ class GridWorld:
                 supply_belt_connect_in_order(Belt, (Building, associate_multiple(Join)), Order),
                 required_possible_touching_point(Belt, XY, Join),
                 associate(Belt, XY).
-
+            belt_lowest_touching_point(Belt,XY,Order):-
+                supply_belt_connect_in_order(Belt, (Building, associate_multiple(Join)), Order),
+                required_possible_touching_point(Belt, XY, Join),
+                associate(Belt, XY),
+                Order = #min { J : belt_connection_order(Belt,_,J) }.
 
             % Belt order
             %#show belt_lowest_touching_point/3.
@@ -211,7 +215,7 @@ class GridWorld:
             %#show belt_start/2.
             %#show -belt_start/3.
             %#show supply_belt_connect_in_order/3.
-
+            %#show supply_touch_on_axis/3.
 
             #show violate/1.
             #show place/2.
