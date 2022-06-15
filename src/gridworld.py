@@ -170,6 +170,9 @@ class GridWorld:
             1 >= { belt_connected(Belt, P2, I, P1): adj(P1,P2), place_belt(Belt, P2), not belt_order(Belt, P2, _);
                    belt_connected(Belt, P2, J, P1): adj(P1,P2), place_belt(Belt, P2), belt_order(Belt, P2, J), J>=I } :- 
                 belt_connected(Belt, P1, I, _).    
+
+            :- belt_connected(Belt, P, _, P1), belt_connected(Belt, P, _, P2), P1<P2.
+
             violate(belt_not_connected(Belt, XY)) :- place_belt(Belt, XY), not belt_connected(Belt, XY, _, _).
             :- violate(belt_not_connected(_,_)).
 
@@ -229,6 +232,7 @@ class GridWorld:
         self.clingo_control.add('base', [], graph)
 
     def parse_model(self, clingo_model):
+        #return frozenset(str(s) for s in clingo_model.symbols(atoms=True))
         return frozenset(str(s) for s in clingo_model.symbols(shown=True))
 
     def add_model(self, model):

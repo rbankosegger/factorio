@@ -1,8 +1,9 @@
 import math
+from collections import defaultdict
 from types import SimpleNamespace
 from matplotlib import pyplot as plt
+from matplotlib import patches
 from matplotlib.collections import PatchCollection
-from matplotlib.patches import Rectangle
 
 from gridworld import GridWorld
 
@@ -98,10 +99,14 @@ class Factorio(GridWorld):
         self.clingo_control.add('base', [], factorio_lp)
 
     def add_visualizable_model(self, model):
+
         loc_free = set()
         loc_res = set()
         loc_place_spec = set()
+        loc_place_spec_per_type = defaultdict(list)
         loc_place_belt = set()
+        loc_place_belt_dir = set()
+
         for sym in model.symbols(atoms=True):
             if sym.match('free', 1):
                 sym_x, sym_y = sym.arguments[0].arguments[0:2]
@@ -118,11 +123,21 @@ class Factorio(GridWorld):
                                     (sym_x.number, sym_y.number), 
                                     sym_sx.number,
                                     sym_sy.number))
+
+                loc_place_spec_per_type[spec].append(((sym_x.number, sym_y.number), 
+                                                              sym_sx.number, 
+                                                              sym_sy.number))
+
             elif sym.match('place_belt', 2):
                 sym_x, sym_y = sym.arguments[1].arguments[0:2]
                 loc_place_belt.add((sym_x.number, sym_y.number))
-                
 
+
+            elif sym.match('belt_connected', 4):
+                if not str(sym.arguments[3]) == 'start':
+                    sym_x0, sym_y0 = sym.arguments[3].arguments[0:2] 
+                    sym_x1, sym_y1 = sym.arguments[1].arguments[0:2]
+                    loc_place_belt_dir.add(((sym_x0.number, sym_y0.number), (sym_x1.number, sym_y1.number)))
 
         model_dict = SimpleNamespace(
             model_number = model.number,
@@ -133,7 +148,9 @@ class Factorio(GridWorld):
             loc_free_ymax = max(y for x,y in loc_free),
             loc_res = loc_res,
             loc_place_spec = loc_place_spec,
+            loc_place_spec_per_type = loc_place_spec_per_type,
             loc_place_belt = loc_place_belt,
+            loc_place_belt_dir = loc_place_belt_dir,
         )
 
         self.visualizable_models.append(model_dict)
@@ -163,22 +180,55 @@ class Factorio(GridWorld):
             ax.set_yticks(range(mod.loc_free_ymin, mod.loc_free_ymax+1))
             ax.invert_yaxis()
 
-            free_boxes = [Rectangle((x-0.5,y-0.5), 1, 1) for x,y in mod.loc_free]
+            free_boxes = [patches.Rectangle((x-0.5,y-0.5), 1, 1) for x,y in mod.loc_free]
             pc = PatchCollection(free_boxes, facecolor='white')
             ax.add_collection(pc)
 
-            place_spec_boxes = [Rectangle((x-0.5,y-0.5),sx,sy) for _,(x,y),sx,sy in mod.loc_place_spec]
-            pc = PatchCollection(place_spec_boxes, facecolor='red', alpha=0.4,edgecolor='k',hatch='//')
+            def placeRect(xy,sx,sy): 
+                x, y = xy
+                return patches.Rectangle((x-0.5,y-0.5),sx,sy)
+
+            def placeEllipse(xy,sx,sy):
+                x, y = xy
+                return patches.Ellipse((x,y),sx,sy)
+
+            spec_viz = {
+                'inserter': (placeEllipse, 'yellow', '..'),
+                'burner_mining_drill(iron_ore)': (placeRect, 'blue', 'xx'),
+                'burner_mining_drill(copper_ore)': (placeRect, 'blue', 'xx'),
+                'burner_mining_drill(coal)': (placeRect, 'blue', 'xx'),
+                'assembling_machine_1': (placeRect, 'cyan', '\\'),
+                'lab': (placeRect, 'magenta', 'oo'),
+                'stone_furnace': (placeRect, 'red', '//'),
+                'wooden_chest': (placeRect, 'magenta', '*'),
+            }
+
+            for spec, placements in mod.loc_place_spec_per_type.items():
+                placeForm, color, hatch = spec_viz[spec]
+                place_spec_boxes = [placeForm(*p) for p in placements]
+                pc = PatchCollection(place_spec_boxes, facecolor=color, alpha=0.4, edgecolor='k',hatch=hatch)
+                ax.add_collection(pc)
+
+                if 'burner_mining_drill' in spec:
+
+                    for xy, sx, sy  in placements:
+                        x, y = xy
+                        ax.plot([x+1], [y+1.5], 'bv', markersize=10)
+                        ax.plot([x+1.5], [y], 'b>', markersize=10)
+                        ax.plot([x], [y-0.5], 'b^', markersize=10)
+                        ax.plot([x-0.5], [y+1], 'b<', markersize=10)
+
+            place_belt_boxes = [patches.Rectangle((x-0.5,y-0.5),1,1) for (x,y) in mod.loc_place_belt]
+            pc = PatchCollection(place_belt_boxes, facecolor='black', alpha=0.4,edgecolor='k',hatch=' ')
             ax.add_collection(pc)
 
-            place_belt_boxes = [Rectangle((x-0.5,y-0.5),1,1) for (x,y) in mod.loc_place_belt]
-            pc = PatchCollection(place_belt_boxes, facecolor='black', alpha=0.4,edgecolor='k',hatch='.')
-            ax.add_collection(pc)
-
+            for (x0,y0), (x1,y1) in mod.loc_place_belt_dir:
+                ax.arrow(x0,y0,x1-x0,y1-y0, head_width=.1, length_includes_head=True)
 
             resource_legend = {
                 'iron_ore': 'bd',
-                'copper_ore': 'rd'
+                'copper_ore': 'rd',
+                'coal': 'kd'
             }
             for res, (x,y) in mod.loc_res:
                 ax.plot([x], [y], resource_legend[res])
