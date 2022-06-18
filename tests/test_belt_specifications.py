@@ -584,6 +584,45 @@ class TestBeltSpecifications(unittest.TestCase):
         instance.solve()
         self.assertSetEqual(instance.models, models)
 
-
-
-    
+#    def test_belt_no_loops(self):
+#    
+#        inmap = """
+#                                      free((2,0)). free((3,0)).
+#                                      free((2,1)). free((3,1)).
+#            free((0,2)). free((1,2)). free((2,2)). free((3,2)).
+#                                      free((2,3)).
+#                                      free((2,4)).
+#
+#            place(b1, (0,2)).
+#            place(b2, (0,2)).
+#        """
+#
+#        specs = """
+#            spec(bs1).
+#            spec_size(bs1, 1, 1).
+#        """
+#
+#        graph = """
+#            supply_node_spec(b1, bs1).
+#            supply_node_spec(b2, bs1).
+#
+#            supply_belt(belt).
+#
+#            supply_belt_connect_in_order(belt, b1, 1).
+#            supply_belt_connect_in_order(belt, b2, 2).
+#
+#        """
+#
+#        models = {
+#
+#            frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))', 'place(b3,(2,0))', 
+#                        'place_belt(belt,(1,0))' }),
+#            frozenset({ 'place(b1,(0,0))', 'place(b2,(1,1))', 'place(b3,(2,1))', 
+#                        'place_belt(belt,(1,0))', 
+#                        'place_belt(belt,(2,0))' }),
+#        }
+#
+#        instance = GridWorld(inmap, specs, graph)
+#        instance.solve()
+#        instance.print_models()
+#        #self.assertSetEqual(instance.models, models)

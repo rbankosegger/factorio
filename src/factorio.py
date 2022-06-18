@@ -160,27 +160,31 @@ class Factorio(GridWorld):
         super().add_model(model)
         self.add_visualizable_model(model)
 
-    def visualize_models(self, columns=3):
+    def visualize_models(self, columns=3, filename=None):
 
         rows = math.ceil(len(self.visualizable_models) / columns)
-        fix, axs = plt.subplots(rows, columns)
+        fix, axs = plt.subplots(rows, columns, figsize=(columns*4, rows*4))
 
         if rows > 1:
             axs_flat = [a for aa in axs for a in aa]
         else:
             axs_flat = axs
 
+        if rows == 1 and columns == 1:
+            axs_flat = [axs]
+
         for (mod, ax) in zip(self.visualizable_models, axs_flat):
 
             ax.set_title(f'Model {mod.model_number}')
             ax.set_facecolor('lightgrey')
-            ax.set_xlim(mod.loc_free_xmin-0.6, mod.loc_free_xmax+0.6)
+            ax.set_xlim(mod.loc_free_xmin-1.0, mod.loc_free_xmax+1.0)
             ax.set_xticks(range(mod.loc_free_xmin, mod.loc_free_xmax+1))
-            ax.set_ylim(mod.loc_free_ymin-0.6, mod.loc_free_ymax+0.6)
+            ax.set_ylim(mod.loc_free_ymin-1.0, mod.loc_free_ymax+1.0)
             ax.set_yticks(range(mod.loc_free_ymin, mod.loc_free_ymax+1))
             ax.invert_yaxis()
+            ax.set_aspect('equal', adjustable='box')
 
-            free_boxes = [patches.Rectangle((x-0.5,y-0.5), 1, 1) for x,y in mod.loc_free]
+            free_boxes = [patches.Rectangle((x-0.501,y-0.501), 1.02, 1.02) for x,y in mod.loc_free]
             pc = PatchCollection(free_boxes, facecolor='white')
             ax.add_collection(pc)
 
@@ -194,9 +198,9 @@ class Factorio(GridWorld):
 
             spec_viz = {
                 'inserter': (placeEllipse, 'yellow', '..'),
-                'burner_mining_drill(iron_ore)': (placeRect, 'blue', 'xx'),
-                'burner_mining_drill(copper_ore)': (placeRect, 'blue', 'xx'),
-                'burner_mining_drill(coal)': (placeRect, 'blue', 'xx'),
+                'burner_mining_drill(iron_ore)': (placeRect, 'blue', ''),
+                'burner_mining_drill(copper_ore)': (placeRect, 'blue', ''),
+                'burner_mining_drill(coal)': (placeRect, 'blue', ''),
                 'assembling_machine_1': (placeRect, 'cyan', '\\'),
                 'lab': (placeRect, 'magenta', 'oo'),
                 'stone_furnace': (placeRect, 'red', '//'),
@@ -213,26 +217,31 @@ class Factorio(GridWorld):
 
                     for xy, sx, sy  in placements:
                         x, y = xy
-                        ax.plot([x+1], [y+1.5], 'bv', markersize=10)
-                        ax.plot([x+1.5], [y], 'b>', markersize=10)
-                        ax.plot([x], [y-0.5], 'b^', markersize=10)
-                        ax.plot([x-0.5], [y+1], 'b<', markersize=10)
+                        ax.plot([x+1], [y+1.5], 'bv', markersize=7, mec='white')
+                        ax.plot([x+1.5], [y], 'b>', markersize=7, mec='white')
+                        ax.plot([x], [y-0.5], 'b^', markersize=7, mec='white')
+                        ax.plot([x-0.5], [y+1], 'b<', markersize=7, mec='white')
 
             place_belt_boxes = [patches.Rectangle((x-0.5,y-0.5),1,1) for (x,y) in mod.loc_place_belt]
             pc = PatchCollection(place_belt_boxes, facecolor='black', alpha=0.4,edgecolor='k',hatch=' ')
             ax.add_collection(pc)
 
             for (x0,y0), (x1,y1) in mod.loc_place_belt_dir:
-                ax.arrow(x0,y0,x1-x0,y1-y0, head_width=.1, length_includes_head=True)
+                ax.arrow(x0,y0,(x1-x0)*1.0,(y1-y0)*1.0, head_width=.2, length_includes_head=True, color='k')
 
             resource_legend = {
-                'iron_ore': 'bd',
+                'iron_ore': 'gd',
                 'copper_ore': 'rd',
                 'coal': 'kd'
             }
             for res, (x,y) in mod.loc_res:
-                ax.plot([x], [y], resource_legend[res])
+                ax.plot([x], [y], resource_legend[res], markeredgewidth=1, mec='white')
+
 
         plt.plot()
-        plt.show()
+
+        if not filename:
+            plt.show()
+        else:
+            plt.savefig(filename)
 
